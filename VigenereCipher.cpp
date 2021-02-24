@@ -75,6 +75,8 @@ class VigenereCipher {
 	
 	string E(string plain, string key){
 		string cipher;
+		plain = CheckString(plain);
+		key = CheckString(key);
 		int plainLen = plain.length(), keyLen = key.length();
 		cout << endl << "---Encrypt---" << endl;
 		cout << "plain: " << plain << ", length: " << plainLen << endl;
@@ -91,10 +93,11 @@ class VigenereCipher {
 
 int main(int argc, char *argv[]){
 	VigenereCipher *vc;
-	if(argc == 2)vc = new VigenereCipher(argv[1]);
+	if(argc > 1)vc = new VigenereCipher(argv[1]);
 	else vc = new VigenereCipher("ABDECRYPTO");
 	vc->PrintSquare();
-	vc->E("ABC", "ABC");
+	if(argc > 3)vc->E(argv[2], argv[3]);
+	else vc->E("ABC", "ABC");
 	
 	delete vc;
 	return 0;
