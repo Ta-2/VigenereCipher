@@ -1,7 +1,7 @@
-
 #include <vector>
 #include <map>
 #include <iostream>
+#include <regex>
 using namespace std;
 
 
@@ -18,10 +18,24 @@ class VigenereCipher {
 	//};
 	
 	VigenereCipher (string character){
-		SetParameter(character);
+		SetParameter( CheckString(character) );
 		MakeVigenereSquare();
 	}
 	~VigenereCipher (){ delete ItoC; }
+
+	string CheckString(string s){
+		string result;
+		cout << "---chekking if chracter that given includes unexpected characters..." << endl;
+		cout << "character given: " << s << endl;
+		for(int i = 0; i < s.length(); i++){
+			if(('0' <= s[i] && s[i] <= '9') || ('A' <= s[i] && s[i] <= 'Z'))result += s[i];
+			else if(('a' <= s[i]) && (s[i] <= 'z'))result += (s[i] + ('A'-'a'));
+			else continue;
+		}
+		cout << "result: " << result << endl;
+		
+		return result;
+	}
 	
 	void SetParameter(string character){
 		cout << endl << "---Setting parameters by character given..." << endl;
@@ -42,6 +56,7 @@ class VigenereCipher {
 			}
 		}
 	}
+	
 	void PrintSquare(){
 		int k = 0;
 		cout << endl << "---VigenereSquare--" << endl;
@@ -75,9 +90,12 @@ class VigenereCipher {
 
 
 int main(int argc, char *argv[]){
-	VigenereCipher vc("ABDECRYPTO");
-	vc.PrintSquare();
-	vc.E("ABC", "ABC");
-
+	VigenereCipher *vc;
+	if(argc == 2)vc = new VigenereCipher(argv[1]);
+	else vc = new VigenereCipher("ABDECRYPTO");
+	vc->PrintSquare();
+	vc->E("ABC", "ABC");
+	
+	delete vc;
 	return 0;
 }
