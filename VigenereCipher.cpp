@@ -1,3 +1,4 @@
+
 #include <vector>
 #include <map>
 #include <iostream>
@@ -8,7 +9,7 @@ using namespace std;
 class VigenereCipher {
 	public:
 	int period = 0;
-	char *ItoC = nullptr;
+	vector<char> ItoC;
 	map<char, int>CtoI;
 	vector<vector<char> > VigenereSquare;
 	//char ItoC[10] = {'A', 'B', 'D', 'E', 'C', 'R', 'Y', 'P', 'T', 'O'};
@@ -21,15 +22,16 @@ class VigenereCipher {
 		SetParameter( CheckString(character) );
 		MakeVigenereSquare();
 	}
-	~VigenereCipher (){ delete ItoC; }
+	~VigenereCipher (){}
 
-	string CheckString(string s){
+	string CheckString(string str){
 		string result;
-		cout << "---chekking if chracter that given includes unexpected characters..." << endl;
-		cout << "character given: " << s << endl;
-		for(int i = 0; i < s.length(); i++){
-			if(('0' <= s[i] && s[i] <= '9') || ('A' <= s[i] && s[i] <= 'Z'))result += s[i];
-			else if(('a' <= s[i]) && (s[i] <= 'z'))result += (s[i] + ('A'-'a'));
+		
+		cout << endl << "---Chekking if chracter given includes unexpected characters..." << endl;
+		cout << "given: " << str << endl;
+		for(char s: str){
+			if(('A' <= s && s <= 'Z'))result += s;
+			else if(('a' <= s) && (s <= 'z'))result += (s + ('A'-'a'));
 			else continue;
 		}
 		cout << "result: " << result << endl;
@@ -37,31 +39,46 @@ class VigenereCipher {
 		return result;
 	}
 	
-	void SetParameter(string character){
+	void SetParameter(string s){
+		bool modify_f = false;
+	
 		cout << endl << "---Setting parameters by character given..." << endl;
-		cout << "character: " << character << endl;
-		period = character.length();
-		ItoC = new char[period];
-		for(int i = 0; i < period; i++){
-			ItoC[i] = character[i];
-			CtoI[character[i]] = i;
+		cout << "given: " << s << endl;
+		for(int i = 0; i < s.length(); i++){
+			if(CtoI.count(s[i]) == 0){
+				ItoC.push_back(s[i]);
+				CtoI[s[i]] = i;
+			} else modify_f = true;
 		}
+		period = ItoC.size();
+		
+		if(modify_f){
+			cout << "[warning]: Some alphabets that appeared some times ware found." << endl;
+			cout << "           Modified \"" << s << "\" to \"" ;
+			for(char i: ItoC)cout << i;
+			cout << "\"" << endl;
+		}
+		cout << "Complete" << endl;
+		
 	}
 	
 	void MakeVigenereSquare(){
+		cout << endl << "---Creating VigenereSquare..." << endl;
 		for(int i = 0; i < period; i++){
 		VigenereSquare.push_back(vector<char>());
 			for(int j = 0; j < period; j++){
 				VigenereSquare[i].push_back(ItoC[(i+j)%period]);
 			}
 		}
+		cout << "Completed" << endl;
 	}
 	
 	void PrintSquare(){
 		int k = 0;
+		
 		cout << endl << "---VigenereSquare--" << endl;
 		cout << " |";
-		for(int i = 0; i < period; i++) cout << ItoC[i] << " ";
+		for(char c: ItoC) cout << c << " ";
 		cout  << endl << "-+";
 		for(int i = 0; i < period; i++) cout << "--";
 		cout << endl;
@@ -78,13 +95,19 @@ class VigenereCipher {
 		plain = CheckString(plain);
 		key = CheckString(key);
 		int plainLen = plain.length(), keyLen = key.length();
-		cout << endl << "---Encrypt---" << endl;
+		
+		cout << endl << "---Encryption---" << endl;
 		cout << "plain: " << plain << ", length: " << plainLen << endl;
 		cout << "key: " << key << ", length: " << keyLen << endl;
 		for(int i = 0; i < plainLen; i++){
+			if(CtoI.count(key[i%keyLen]) * CtoI.count(plain[i%plainLen]) == 0){
+				cout << "[error]: Unavailable character was found. return \"-\"." << endl;
+				return "-";
+			}
 			cipher += VigenereSquare[CtoI[key[i%keyLen]]][CtoI[plain[i%plainLen]]];
 		}
 		cout << "result of Encrypt: " << cipher << endl;
+		
 		return cipher;
 	}
 	
