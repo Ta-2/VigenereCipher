@@ -110,17 +110,50 @@ class VigenereCipher {
 		
 		return cipher;
 	}
+
+	string D(string cipher, string key){
+		string plain;
+		cipher = CheckString(cipher);
+		key = CheckString(key);
+		int cipherLen = cipher.length(), keyLen = key.length();
+		
+		cout << endl << "---Decryption---" << endl;
+		cout << "cipher: " << cipher << ", length: " << cipherLen << endl;
+		cout << "key: " << key << ", length: " << keyLen << endl;
+		for(int i = 0; i < cipherLen; i++){
+			if(CtoI.count(key[i%keyLen]) * CtoI.count(cipher[i%cipherLen]) == 0){
+				cout << "[error]: Unavailable character was found. return \"-\"." << endl;
+				return "-";
+			}
+			auto it = find(VigenereSquare[CtoI[key[i%keyLen]]].begin(), VigenereSquare[CtoI[key[i%keyLen]]].end(), cipher[i]);
+			size_t index = distance(VigenereSquare[CtoI[key[i%keyLen]]].begin(), it);
+			plain += ItoC[index];
+		}
+		cout << "result of Decrypt: " << plain << endl;
+		
+		return plain;
+	}
 	
 };
 
 
 int main(int argc, char *argv[]){
 	VigenereCipher *vc;
+	string plain = "ABC";
+	string cipher = "ABC";
+	string key = "ABC";
+	
 	if(argc > 1)vc = new VigenereCipher(argv[1]);
 	else vc = new VigenereCipher("ABDECRYPTO");
 	vc->PrintSquare();
-	if(argc > 3)vc->E(argv[2], argv[3]);
-	else vc->E("ABC", "ABC");
+	
+	if(argc > 3){
+		cipher = vc->E(argv[2], argv[3]);
+		plain = vc->D(cipher, argv[3]);
+	} else {
+		cipher = vc->E(plain, key);
+		plain = vc->D(cipher, key);
+	}
 	
 	delete vc;
 	return 0;
