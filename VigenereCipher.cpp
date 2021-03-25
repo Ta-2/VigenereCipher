@@ -1,4 +1,3 @@
-
 #include <vector>
 #include <map>
 #include <iostream>
@@ -97,8 +96,8 @@ class VigenereCipher {
 		int plainLen = plain.length(), keyLen = key.length();
 		
 		cout << endl << "---Encryption---" << endl;
-		cout << "plain: " << plain << ", length: " << plainLen << endl;
-		cout << "key: " << key << ", length: " << keyLen << endl;
+		cout << "<<plain>>= " << plain << ", length: " << plainLen << endl;
+		cout << "<<key>>= " << key << ", length: " << keyLen << endl;
 		for(int i = 0; i < plainLen; i++){
 			if(CtoI.count(key[i%keyLen]) * CtoI.count(plain[i%plainLen]) == 0){
 				cout << "[error]: Unavailable character was found. return \"-\"." << endl;
@@ -106,7 +105,7 @@ class VigenereCipher {
 			}
 			cipher += VigenereSquare[CtoI[key[i%keyLen]]][CtoI[plain[i%plainLen]]];
 		}
-		cout << "result of Encrypt: " << cipher << endl;
+		cout << "<<result of Encrypt>>= " << cipher << endl;
 		
 		return cipher;
 	}
@@ -118,8 +117,8 @@ class VigenereCipher {
 		int cipherLen = cipher.length(), keyLen = key.length();
 		
 		cout << endl << "---Decryption---" << endl;
-		cout << "cipher: " << cipher << ", length: " << cipherLen << endl;
-		cout << "key: " << key << ", length: " << keyLen << endl;
+		cout << "<<cipher>>= " << cipher << ", length: " << cipherLen << endl;
+		cout << "<<key>>= " << key << ", length: " << keyLen << endl;
 		for(int i = 0; i < cipherLen; i++){
 			if(CtoI.count(key[i%keyLen]) * CtoI.count(cipher[i%cipherLen]) == 0){
 				cout << "[error]: Unavailable character was found. return \"-\"." << endl;
@@ -129,7 +128,7 @@ class VigenereCipher {
 			size_t index = distance(VigenereSquare[CtoI[key[i%keyLen]]].begin(), it);
 			plain += ItoC[index];
 		}
-		cout << "result of Decrypt: " << plain << endl;
+		cout << "<<result of Decrypt>>= " << plain << endl;
 		
 		return plain;
 	}
